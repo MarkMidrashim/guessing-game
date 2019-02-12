@@ -10,7 +10,6 @@
 #define CHANCE_LENGTH 1
 
 // Global's properties
-float average;
 int attempts = 0, win = 0, lose = 0, guesses = 0;
 char newChance[CHANCE_LENGTH];
 
