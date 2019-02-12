@@ -3,7 +3,6 @@
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
-#include <ncurses.h>
 #include <stdbool.h>
 
 // Defines
