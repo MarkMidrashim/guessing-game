@@ -3,7 +3,6 @@
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
-#include <ncurses.h>
 #include <stdbool.h>
 
 // Defines
@@ -19,8 +18,7 @@
 #define ANSI_COLOR_RESET "\x1b[0m"
 
 // Global's properties
-float average;
-int attempts = 0, win = 0, lose = 0, guesses = 0;
+int attempts = 0, win = 0, lose = 0, guesses = 0, range = 1, levelGame;
 char newChance[CHANCE_LENGTH];
 
 void asciiArt(int type) {
@@ -69,6 +67,19 @@ void header() {
     asciiArt(0);
 }
 
+int level() {
+    header();
+
+    printf("\n            Game Level\n");
+    printf("-------------------------------------\n");
+    printf(ANSI_COLOR_GREEN  "E A S Y"     ANSI_COLOR_RESET "     (Between 0 and 10)      " ANSI_COLOR_CYAN "1" ANSI_COLOR_RESET "\n");
+    printf(ANSI_COLOR_YELLOW "M E D I U M" ANSI_COLOR_RESET " (Between 0 and 100)     "     ANSI_COLOR_CYAN "2" ANSI_COLOR_RESET "\n");
+    printf(ANSI_COLOR_RED    "H A R D"     ANSI_COLOR_RESET "     (Between 0 and 1000)    " ANSI_COLOR_CYAN "3" ANSI_COLOR_RESET "\n");
+    printf("-------------------------------------\n");
+    printf("What level will you play? ");
+    scanf("%d", &levelGame);
+}
+
 bool game(int secretNumber) {
     // Local's properties
     int attemptsForGame = GUESSING_NUMBER, bid;
@@ -103,7 +114,7 @@ bool game(int secretNumber) {
                 }
                 
                 // Tips
-                printf("You missed! %c[3mYour guess is %s than secret value.\n%c[3m", 27, bid > secretNumber ? "greater" : "smaller", 27);
+                printf("\nYou missed! %c[3mYour guess is %s than secret value%c[0m\n", 27, bid > secretNumber ? "greater" : "smaller", 27);
             }
         }
     } while (attemptsForGame > 0);
@@ -127,15 +138,30 @@ void analytics() {
     printf(ANSI_COLOR_MAGENTA " \\_____/ / /\\ /     " ANSI_COLOR_RESET "\n");
     printf(ANSI_COLOR_MAGENTA "  \\_____/ \\\\ \\    " ANSI_COLOR_RESET "    Lose Percent: %.2f%%\n", percentLose);
     printf(ANSI_COLOR_MAGENTA "   \\_____\\ \\\\     " ANSI_COLOR_RESET "    Win Percent: %.2f%%\n", percentWin);
-    printf(ANSI_COLOR_MAGENTA "    \\_____\\/        " ANSI_COLOR_RESET "\n");
+    printf(ANSI_COLOR_MAGENTA "    \\_____\\/        " ANSI_COLOR_RESET "\n\n");
 }
 
 int main() {
     // Start game's logical
     do {
+        // Select level 
+        level();
+
         // Generate random number
+        switch(levelGame) {
+            case 1:
+                range = 10;
+                break;
+            case 2:
+                range = 100;
+                break;
+            case 3:
+                range = 1000;
+                break;
+        }
+
         srand(time(NULL));
-        int secretNumber = rand() % 10;
+        int secretNumber = rand() % range;
         
         // Start game
         bool result = game(secretNumber);
